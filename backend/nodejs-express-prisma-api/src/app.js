@@ -16,7 +16,20 @@ const logger = require('./utils/logger');
 const app = express();
 
 // Configuração do CORS
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGIN || '')
+	.split(',')
+	.map((origin) => origin.trim())
+	.filter(Boolean);
+
+app.use(cors({
+	origin: (origin, callback) => {
+		if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+			return callback(null, true);
+		}
+
+		return callback(new Error('CORS origin not allowed'));
+	},
+}));
 
 app.use(morgan('combined', {
 	stream: {

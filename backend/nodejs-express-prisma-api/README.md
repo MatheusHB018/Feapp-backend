@@ -42,6 +42,26 @@ npm run dev
 
 Servidor padrão: `http://localhost:3000`
 
+## Deploy no Render (Mongo Atlas)
+
+O backend já está preparado para deploy no Render usando MongoDB Atlas.
+
+1. No Render, crie um **Web Service** apontando para este repositório.
+2. Configure:
+	- **Root Directory**: `backend`
+	- **Build Command**: `npm install`
+	- **Start Command**: `npm start`
+	- **Health Check Path**: `/api/health`
+3. Adicione as variáveis de ambiente:
+	- `NODE_ENV=production`
+	- `PORT=10000`
+	- `MONGO_URI=mongodb+srv://feapp:feapp123@cluster0.49whw6i.mongodb.net/feapp_db?retryWrites=true&w=majority&appName=Cluster0`
+	- `JWT_SECRET=<seu_segredo_forte>`
+	- `CORS_ORIGIN=<url_do_frontend_netlify>`
+4. (Opcional) Configure SMTP para envio de notificações por e-mail.
+
+Também existe o arquivo `backend/render.yaml` para deploy via Blueprint.
+
 ## Scripts
 
 No `backend/package.json`:
@@ -54,11 +74,14 @@ No `backend/package.json`:
 
 Arquivo: `backend/nodejs-express-prisma-api/.env`
 
+Para produção no Render, prefira configurar no painel do Render (ou usar `backend/.env.example` como referência).
+
 Obrigatórias:
 
 - `PORT=3000`
 - `MONGO_URI=mongodb://localhost:27017/feapp_db`
 - `JWT_SECRET=...`
+- `CORS_ORIGIN=https://seu-frontend.netlify.app`
 
 SMTP (opcional para desenvolvimento, obrigatório para envio real):
 
