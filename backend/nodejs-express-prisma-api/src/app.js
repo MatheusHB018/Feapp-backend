@@ -51,6 +51,7 @@ app.use('/api/associations', associationRoutes);
 app.use('/api/volunteers', volunteerRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/support-requests', supportRequestRoutes);
+app.use('/api/support', supportRequestRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/partners', partnerRoutes);
 

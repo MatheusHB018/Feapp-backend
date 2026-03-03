@@ -1,6 +1,6 @@
 const Association = require('../models/Association');
 const SupportRequest = require('../models/SupportRequest');
-const { sendSupportRequestEmail } = require('../services/emailService');
+const { sendDonationIntentEmails } = require('../services/emailService');
 const logger = require('../utils/logger');
 
 const isEmailValid = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).toLowerCase());
@@ -8,91 +8,67 @@ const isEmailValid = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).
 exports.createSupportRequest = async (req, res) => {
     try {
         const {
-            type,
-            fullName,
-            companyName,
-            contactName,
+            name,
             email,
             phone,
             associationId,
+            associationName,
             message,
+            details,
         } = req.body;
 
-        if (!['donation', 'company'].includes(type)) {
-            return res.status(400).json({ message: 'Invalid type. Use donation or company' });
-        }
-
-        if (!email || !phone || !associationId) {
-            return res.status(400).json({ message: 'email, phone and associationId are required' });
+        if (!name || !email || !phone || (!associationId && !associationName)) {
+            return res.status(400).json({
+                message: 'name, email, phone and associationId (or associationName) are required',
+            });
         }
 
         if (!isEmailValid(email)) {
             return res.status(400).json({ message: 'Invalid email format' });
         }
 
-        if (type === 'donation' && !fullName) {
-            return res.status(400).json({ message: 'fullName is required for donation request' });
+        const resolvedMessage = message ?? details ?? '';
+
+        let association = null;
+        if (associationId) {
+            association = await Association.findOne({ _id: associationId, status: 'active' });
+        } else if (associationName) {
+            association = await Association.findOne({
+                name: { $regex: `^${associationName.trim()}$`, $options: 'i' },
+                status: 'active',
+            });
         }
 
-        if (type === 'company' && (!companyName || !contactName)) {
-            return res.status(400).json({ message: 'companyName and contactName are required for company request' });
-        }
-
-        const association = await Association.findOne({ _id: associationId, status: 'active' });
         if (!association) {
             return res.status(404).json({ message: 'Active association not found' });
         }
 
         const request = await SupportRequest.create({
-            type,
-            fullName,
-            companyName,
-            contactName,
+            type: 'donation',
+            fullName: name,
             email,
             phone,
-            association: associationId,
-            message,
+            association: association._id,
+            message: resolvedMessage,
+            status: 'pending',
         });
 
-        let emailResult = {
-            sent: false,
-            warning: 'SMTP não configurado ou envio falhou',
-        };
-
         try {
-            await sendSupportRequestEmail({
-                type,
-                fullName,
-                companyName,
-                contactName,
+            await sendDonationIntentEmails({
+                donorName: name,
                 email,
                 phone,
                 associationName: association.name,
-                message,
+                message: resolvedMessage,
             });
-            emailResult = {
-                sent: true,
-                warning: null,
-            };
         } catch (emailError) {
-            logger.error('Support request email failed', {
-                message: emailError.message,
-                stack: emailError.stack,
-            });
-
-            emailResult = {
-                sent: false,
-                warning: `Solicitação salva, mas o envio de e-mail falhou: ${emailError.message}`,
-            };
+            logger.error('Donation intent email failed', { message: emailError.message, stack: emailError.stack });
         }
 
         res.status(201).json({
             id: request._id,
-            type: request.type,
-            status: request.status,
+            status: 'pendente',
             createdAt: request.createdAt,
-            emailSentTo: process.env.NOTIFICATION_EMAIL_TO || 'matheusbispo925@gmail.com',
-            email: emailResult,
         });
     } catch (error) {
         res.status(500).json({ error: error.message });

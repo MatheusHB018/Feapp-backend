@@ -6,6 +6,7 @@ const supportRequestController = require('../controllers/supportRequestControlle
 const router = express.Router();
 
 router.post('/', supportRequestController.createSupportRequest);
+router.post('/donate', supportRequestController.createSupportRequest);
 router.get('/', authMiddleware, roleMiddleware(['admin', 'federacao']), supportRequestController.getSupportRequests);
 router.patch('/:id/status', authMiddleware, roleMiddleware(['admin', 'federacao']), supportRequestController.updateSupportRequestStatus);
 
