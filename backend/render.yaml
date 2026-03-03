@@ -24,6 +24,8 @@ services:
         value: "8"
       - key: MONGO_CONNECT_RETRY_DELAY_MS
         value: "3000"
+      - key: MONGO_RECONNECT_DELAY_MS
+        value: "15000"
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN

@@ -34,13 +34,48 @@ if (missingEnvVars.length > 0) {
 
 const PORT = process.env.PORT || 3000;
 
-const startServer = async () => {
+const parseNumber = (value, defaultValue) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : defaultValue;
+};
+
+let reconnectTimeout = null;
+
+const scheduleMongoReconnect = () => {
+    if (reconnectTimeout) {
+        return;
+    }
+
+    const reconnectDelayMs = parseNumber(process.env.MONGO_RECONNECT_DELAY_MS, 15000);
+
+    reconnectTimeout = setTimeout(async () => {
+        reconnectTimeout = null;
+
+        try {
+            await connectDB();
+            console.log('MongoDB reconectado com sucesso');
+        } catch (error) {
+            console.error('Falha ao reconectar no MongoDB:', error.message);
+            scheduleMongoReconnect();
+        }
+    }, reconnectDelayMs);
+};
+
+const initializeDatabaseConnection = async () => {
     try {
         await connectDB();
+    } catch (error) {
+        console.error('Banco indisponível no boot, API seguirá no ar e tentará reconectar:', error.message);
+        scheduleMongoReconnect();
+    }
+};
 
+const startServer = async () => {
+    try {
         // Iniciar o servidor
-        app.listen(PORT, '0.0.0.0', () => {
+        app.listen(PORT, '0.0.0.0', async () => {
             console.log(`Servidor rodando na porta ${PORT}`);
+            await initializeDatabaseConnection();
         });
     } catch (error) {
         console.error('Erro ao iniciar servidor:', error.message);
