@@ -4,7 +4,10 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 const {
     register,
-    login
+    login,
+    registerAdmin,
+    forgotPassword,
+    resetPassword
 } = require('../controllers/authController');
 
 
@@ -17,6 +20,21 @@ router.post('/register', register);
 // @desc    Login user
 // @access  Public
 router.post('/login', login);
+
+// @route   POST /api/auth/register-admin
+// @desc    Register admin user
+// @access  Private/Admin
+router.post('/register-admin', authMiddleware, roleMiddleware(['admin']), registerAdmin);
+
+// @route   POST /api/auth/forgot-password
+// @desc    Send password reset email
+// @access  Public
+router.post('/forgot-password', forgotPassword);
+
+// @route   PUT /api/auth/reset-password/:token
+// @desc    Reset user password
+// @access  Public
+router.put('/reset-password/:token', resetPassword);
 
 // @route   GET /api/auth/me
 // @desc    Get authenticated user
