@@ -46,6 +46,11 @@ router.get('/me', authMiddleware, (req, res) => {
     res.json(req.user);
 });
 
+// Exemplo de rota protegida usando authMiddleware
+router.get('/dashboard', authMiddleware, (req, res) => {
+    res.json({ message: 'Protected dashboard', user: req.user });
+});
+
 // Example of protecting a route with authMiddleware and roleMiddleware
 router.get('/admin', authMiddleware, roleMiddleware(['admin']), (req, res) => {
     res.json({
