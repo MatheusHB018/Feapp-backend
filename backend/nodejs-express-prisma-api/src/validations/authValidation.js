@@ -14,6 +14,13 @@ const registerSchema = Joi.object({
 const loginSchema = Joi.object({
     email: Joi.string().trim().email({ tlds: { allow: false } }).required(),
     password: Joi.string().min(8).required(),
+    // captchaAnswer pode ser number ou string contendo dígitos
+    captchaAnswer: Joi.alternatives().try(
+        Joi.number().integer(),
+        Joi.string().pattern(/^\d+$/)
+    ).required(),
+    // captchaHash é um hex string (SHA-256 = 64 hex chars)
+    captchaHash: Joi.string().hex().length(64).required(),
 });
 
 module.exports = {

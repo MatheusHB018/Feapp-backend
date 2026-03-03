@@ -53,15 +53,8 @@ const register = async (req, res) => {
 // Função para fazer login
 const login = async (req, res) => {
     try {
-        const { error, value } = loginSchema.validate(req.body, { abortEarly: false });
-        if (error) {
-            return res.status(400).json({
-                message: 'Validation error',
-                details: error.details.map((item) => item.message),
-            });
-        }
-
-        const { email, password } = value;
+        // validação do payload foi movida para middleware (validateLogin)
+        const { email, password } = req.body;
 
         // Buscar o usuário
         const user = await User.findOne({ email });

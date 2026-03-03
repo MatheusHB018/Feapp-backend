@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 const captchaMiddleware = require('../middlewares/captchaMiddleware');
+const validateLogin = require('../middlewares/validateLoginMiddleware');
 const {
     register,
     login,
@@ -20,7 +21,8 @@ router.post('/register', register);
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public
-router.post('/login', captchaMiddleware, login);
+// Validar payload antes do CAPTCHA para evitar conflitos de ordem
+router.post('/login', validateLogin, captchaMiddleware, login);
 
 // @route   POST /api/auth/register-admin
 // @desc    Register admin user
