@@ -14,6 +14,10 @@ services:
         value: 10000
       - key: MONGO_URI
         sync: false
+      - key: MONGO_TLS
+        value: true
+      - key: MONGO_TLS_ALLOW_INVALID_CERTIFICATES
+        value: false
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
