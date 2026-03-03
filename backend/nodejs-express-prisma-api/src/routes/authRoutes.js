@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
+const recaptchaMiddleware = require('../middlewares/recaptchaMiddleware');
 const {
     register,
     login,
@@ -19,7 +20,7 @@ router.post('/register', register);
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public
-router.post('/login', login);
+router.post('/login', recaptchaMiddleware, login);
 
 // @route   POST /api/auth/register-admin
 // @desc    Register admin user
