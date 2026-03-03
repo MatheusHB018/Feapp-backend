@@ -9,6 +9,7 @@ const volunteerRoutes = require('./routes/volunteerRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const supportRequestRoutes = require('./routes/supportRequestRoutes');
 const partnerRoutes = require('./routes/partnerRoutes');
+const captchaRoutes = require('./routes/captchaRoutes');
 const swaggerDocument = require('./config/swagger');
 const logger = require('./utils/logger');
 //const errorHandler = require('./middlewares/errorHandler');
@@ -52,6 +53,7 @@ app.use('/api/volunteers', volunteerRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/support-requests', supportRequestRoutes);
 app.use('/api/support', supportRequestRoutes);
+app.use('/api/captcha', captchaRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/partners', partnerRoutes);
 
