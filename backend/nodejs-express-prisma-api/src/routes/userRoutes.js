@@ -8,8 +8,8 @@ const router = express.Router();
 // Definindo rotas para usuários
 router.post('/', authMiddleware, roleMiddleware(['admin']), userController.createUser);
 router.get('/', authMiddleware, roleMiddleware(['admin']), userController.getAllUsers);
-router.get('/:id', authMiddleware, userController.getUserById);
-router.put('/:id', authMiddleware, userController.updateUser);
+router.get('/:id', authMiddleware, roleMiddleware('admin'), userController.getUserById);
+router.put('/:id', authMiddleware, roleMiddleware('admin'), userController.updateUser);
 router.delete('/:id', authMiddleware, roleMiddleware(['admin']), userController.deleteUser);
 
 module.exports = router;

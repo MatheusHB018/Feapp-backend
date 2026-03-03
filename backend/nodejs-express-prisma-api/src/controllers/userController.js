@@ -43,15 +43,12 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     const { id } = req.params;
     try {
-        if (req.user.role !== 'admin' && req.user._id.toString() !== id) {
-            return res.status(403).json({ message: 'Not authorized to access this user' });
-        }
-
-        const user = await User.findById(id).select('-password').populate('association');
+        const user = await User.findById(id).select('name email role');
 
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
+
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -61,12 +58,8 @@ exports.getUserById = async (req, res) => {
 // Atualizar um usuário
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
-    const { name, email, password, role } = req.body;
+    const { name, email, role } = req.body;
     try {
-        if (req.user.role !== 'admin' && req.user._id.toString() !== id) {
-            return res.status(403).json({ message: 'Not authorized to update this user' });
-        }
-
         const user = await User.findById(id);
 
         if (!user) {
@@ -76,13 +69,7 @@ exports.updateUser = async (req, res) => {
         user.name = name ?? user.name;
         user.email = email ?? user.email;
 
-        if (password) {
-            user.password = password;
-        }
-
-        if (role && req.user.role === 'admin') {
-            user.role = role;
-        }
+        user.role = role ?? user.role;
 
         const updatedUser = await user.save();
 
