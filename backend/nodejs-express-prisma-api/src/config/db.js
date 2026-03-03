@@ -28,7 +28,7 @@ const connectDB = async () => {
     tlsAllowInvalidCertificates: parseBoolean(process.env.MONGO_TLS_ALLOW_INVALID_CERTIFICATES, false),
   };
 
-  const ipFamily = parseNumber(process.env.MONGO_IP_FAMILY, NaN);
+  const ipFamily = parseNumber(process.env.MONGO_IP_FAMILY, isProduction ? 4 : NaN);
   if (ipFamily === 4 || ipFamily === 6) {
     connectionOptions.family = ipFamily;
   }

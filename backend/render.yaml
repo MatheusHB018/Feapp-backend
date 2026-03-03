@@ -18,6 +18,12 @@ services:
         value: "true"
       - key: MONGO_TLS_ALLOW_INVALID_CERTIFICATES
         value: "false"
+      - key: MONGO_IP_FAMILY
+        value: "4"
+      - key: MONGO_CONNECT_RETRIES
+        value: "8"
+      - key: MONGO_CONNECT_RETRY_DELAY_MS
+        value: "3000"
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
