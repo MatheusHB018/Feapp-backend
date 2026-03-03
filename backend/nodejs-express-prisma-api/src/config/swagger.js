@@ -19,6 +19,15 @@ const swaggerDocument = {
         { name: 'Volunteers' },
         { name: 'Events' },
     ],
+    components: {
+        securitySchemes: {
+            bearerAuth: {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+            },
+        },
+    },
     paths: {
         '/api/health': {
             get: {
@@ -49,19 +58,34 @@ const swaggerDocument = {
                 },
             },
         },
+        '/api/auth/me': {
+            get: {
+                tags: ['Auth'],
+                summary: 'Get authenticated user',
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    200: { description: 'Authenticated user' },
+                    401: { description: 'Not authorized' },
+                },
+            },
+        },
         '/api/associations': {
             get: {
                 tags: ['Associations'],
-                summary: 'Listar associações',
+                summary: 'Listar associações (protegido)',
+                security: [{ bearerAuth: [] }],
                 responses: {
                     200: { description: 'Lista de associações' },
+                    401: { description: 'Not authorized' },
                 },
             },
             post: {
                 tags: ['Associations'],
-                summary: 'Criar associação',
+                summary: 'Criar associação (protegido)',
+                security: [{ bearerAuth: [] }],
                 responses: {
                     201: { description: 'Associação criada' },
+                    401: { description: 'Not authorized' },
                 },
             },
         },
@@ -78,16 +102,20 @@ const swaggerDocument = {
         '/api/events': {
             get: {
                 tags: ['Events'],
-                summary: 'Listar eventos',
+                summary: 'Listar eventos (protegido)',
+                security: [{ bearerAuth: [] }],
                 responses: {
                     200: { description: 'Lista de eventos' },
+                    401: { description: 'Not authorized' },
                 },
             },
             post: {
                 tags: ['Events'],
-                summary: 'Criar evento',
+                summary: 'Criar evento (protegido)',
+                security: [{ bearerAuth: [] }],
                 responses: {
                     201: { description: 'Evento criado' },
+                    401: { description: 'Not authorized' },
                 },
             },
         },
