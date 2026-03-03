@@ -1,7 +1,7 @@
 services:
   - type: web
     name: feapp-backend
-    env: node
+    runtime: node
     plan: free
     rootDir: backend
     buildCommand: npm install
@@ -15,9 +15,9 @@ services:
       - key: MONGO_URI
         sync: false
       - key: MONGO_TLS
-        value: true
+        value: "true"
       - key: MONGO_TLS_ALLOW_INVALID_CERTIFICATES
-        value: false
+        value: "false"
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
