@@ -41,7 +41,7 @@ app.use(morgan('combined', {
 // Middleware para parsear JSON
 app.use(express.json());
 
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/api/saude'], (req, res) => {
 	res.status(200).json({ status: 'ok' });
 });
 
