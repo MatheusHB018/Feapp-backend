@@ -5,6 +5,7 @@ const partnerController = require('../controllers/partnerController');
 
 const router = express.Router();
 
+// Rota pública: Retorna todas as parcerias ativas (sem paginação)
 router.get('/public', partnerController.getPublicPartners);
 router.post('/', authMiddleware, roleMiddleware(['admin', 'federacao']), partnerController.createPartner);
 router.get('/', authMiddleware, partnerController.getPartners);
